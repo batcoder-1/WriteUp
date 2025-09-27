@@ -76,9 +76,12 @@ function PostForm({ post }) {
    const id=usedata.$id;
    const userinfo=await appwriteServices.getUser(id);
    let blogs=userinfo.Blogs;
+   console.log(userinfo);
+   const name=userinfo.Username;
+   const email=userinfo.email;
+   const image=userinfo.Image;
    blogs++;
-   console.log(`${blogs} ${id}`);
-  await appwriteServices.updateUser(id,null,blogs);
+  await appwriteServices.updateUser(id,name,image,blogs,email);
     if (dbpost) {
       navigate(`/post/${dbpost.$id}`);
     }
