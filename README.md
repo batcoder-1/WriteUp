@@ -59,7 +59,7 @@ writeup/
 
 Clone the repository:
 
-git clone https://github.com/your-username/writeup.git
+git clone https://github.com/batcoder-1/WriteUp
 cd writeup
 
 
