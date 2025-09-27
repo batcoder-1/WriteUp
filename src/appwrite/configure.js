@@ -25,8 +25,8 @@ return await this.database.createDocument(
         Title,
         Content,
         Image,
-        User_ID,
         Status,
+        User_ID,
         Slug,
     }
 )
