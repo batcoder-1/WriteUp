@@ -98,9 +98,9 @@ function Account() {
         <section className="bg-white rounded-2xl shadow-md p-6 flex flex-col sm:flex-row items-center gap-6 hover:shadow-lg transition">
           {/* Profile Image */}
           <div className="relative">
-            {formData.image ? (
+            {formData.Image ? (
               <img
-                src={formData.image}
+                src={formData.Image}
                 alt="profile"
                 className="w-28 h-28 rounded-full object-cover border-4 border-indigo-200"
               />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect,useState } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import RTE from "./RTE";
@@ -10,6 +10,7 @@ import Select from "./Select";
 import { useNavigate } from "react-router-dom";
 
 function PostForm({ post }) {
+  const [loading, setLoading] =useState(false);
   const { watch, control, handleSubmit, register, getValues, setValue, reset } =
     useForm({
       defaultValues: {
@@ -41,6 +42,7 @@ function PostForm({ post }) {
     return () => subscription.unsubscribe();
   }, [watch, setValue, slugtransform]);
   const submit = async (data) => {
+    setLoading(true);
   // console.log(data);
 
   let file = null;
@@ -86,8 +88,19 @@ function PostForm({ post }) {
       navigate(`/post/${dbpost.$id}`);
     }
   }
-
+setLoading(false);
 };
+if(loading){
+  return (
+  <>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-gray-700 text-lg font-medium animate-pulse">
+        Loading...
+      </div>
+    </div>
+  </>
+);
+}
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
       <div className="w-2/3 px-2">
