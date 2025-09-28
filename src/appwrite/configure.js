@@ -16,8 +16,8 @@ export class Services{ // created a separate class to handle different appwrite 
     }
     async createPost({Title, Content, Image, User_ID,Status,Slug}) { // method to create a new post
 try{
-    const post=await this.getPost(Slug);
-    if(post) Slug=Slug+"-"+ID.unique();// if slug already exists then we append a unique id to it
+    const isSlugexit=await this.checkSlugExists(Slug);
+    if(isSlugexit) Slug=Slug+"-"+ID.unique();// if slug already exists then we append a unique id to it
 return await this.database.createDocument(
     config.appwritedatabaseid,
     config.appwritecollectionid,
@@ -82,6 +82,19 @@ return await this.database.updateDocument(
             throw error;
             return false;
         }   
+    }
+    async checkSlugExists(slug,queries=[Query.equal("Slug", slug)]) { // method to check if a slug already exists
+        try{
+            const result= await this.database.listDocuments(
+                config.appwritedatabaseid,
+                config.appwritecollectionid,
+                queries
+            );
+            return result.total > 0;
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getPosts(queries=[Query.equal("Status", "active")]) { // method to get all posts with optional filters
         try{
