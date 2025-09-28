@@ -60,7 +60,7 @@ function Account() {
       let fileId = user.Image;
       if (formData.Image?.file) {
         const uploadedFile = await appwriteServices.uploadFile(formData.Image.file);
-        await appwriteServices.deletefile(fileId); // delete old file
+        if(fileId) await appwriteServices.deletefile(fileId); // delete old file
         fileId = uploadedFile.$id;
       }
 
