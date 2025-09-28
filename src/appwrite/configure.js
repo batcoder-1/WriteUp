@@ -21,7 +21,7 @@ try{
 return await this.database.createDocument(
     config.appwritedatabaseid,
     config.appwritecollectionid,
-    Slug,
+    ID.unique(),
     {
         Title,
         Content,
