@@ -16,6 +16,8 @@ export class Services{ // created a separate class to handle different appwrite 
     }
     async createPost({Title, Content, Image, User_ID,Status,Slug}) { // method to create a new post
 try{
+    const post=await this.getPost(Slug);
+    if(post) Slug=Slug+"-"+ID.unique();// if slug already exists then we append a unique id to it
 return await this.database.createDocument(
     config.appwritedatabaseid,
     config.appwritecollectionid,

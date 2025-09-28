@@ -19,7 +19,10 @@ export default function Post() {
   const [image,setImage]=useState("");
   // Determine if the logged-in user is the author of the post
   const [isAuthor, setIsAuthor] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [loading,setLoading]=useState(false);
   useEffect(() => {
+  setLoading(true);
     if (slug) {
       appwriteServices.getPost(slug).then(async (post) => {
         if (post){ setPost(post);
@@ -32,11 +35,13 @@ export default function Post() {
           setUsername(user.Username);
         }
         else navigate("/");
+        setLoading(false);
       });
     } else navigate("/");
   }, [slug, navigate]);
 
   const deletePost = async () => {
+    setDeleting(true);
     const status = await appwriteServices.deletePost(post.$id);
     if (status) {
       if(post.Image) await appwriteServices.deletefile(post.Image);
@@ -44,9 +49,72 @@ export default function Post() {
      if(newBlogs>0)newBlogs--;
      setBlogs(newBlogs);
       await appwriteServices.updateUser(post.User_ID,username,image,newBlogs,email);
+      setDeleting(false);
       navigate("/");
     }
   };
+  if(loading){
+    return(
+         <>
+            <div className="flex items-center justify-center h-screen bg-gray-100">
+              <div className="bg-white px-6 py-4 rounded-lg shadow-md flex items-center space-x-3">
+                <svg
+                  className="w-6 h-6 text-indigo-600 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span className="text-gray-700 font-medium">Loading...</span>
+              </div>
+            </div>
+            </>
+    )
+  }
+  if(deleting){
+    return(
+      <>
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="bg-white px-6 py-4 rounded-lg shadow-md flex items-center space-x-3">
+          <svg
+            className="w-6 h-6 text-indigo-600 animate-spin"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <span className="text-gray-700 font-medium">Deleting...</span>
+        </div>
+      </div>
+      </>
+    )
+  }
   return post ? (
     <div className="bg-gray-50 py-12 min-h-screen">
       <Container>
