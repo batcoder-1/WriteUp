@@ -15,7 +15,6 @@ export class Services{ // created a separate class to handle different appwrite 
         this.storage = new Storage(this.client);
     }
     async createPost({Title, Content, Image, User_ID,Status,Slug}) { // method to create a new post
-        console.log(Slug);
 try{
 return await this.database.createDocument(
     config.appwritedatabaseid,
@@ -69,7 +68,6 @@ return await this.database.updateDocument(
         }
     }
     async getPost(slug){
-        console.log(slug);
         // if(slug===":slug")slug="slug";//done due to we fixed the route and if no documnet is present then the slug would be :slug hence not valid for appwrite
         try{
             return await this.database.getDocument(
@@ -153,7 +151,6 @@ getfileUrl(fileId) { // method to get the URL of a file
 //-----------------User Database services-----------------//
 async createUser($id,Username,email){
     try{
-        console.log(`user:${$id} ${Username}`);
   return this.database.createDocument(
     config.appwriteuserinfoDatabaseid,
     config.appwriteuserinfocollectionid,

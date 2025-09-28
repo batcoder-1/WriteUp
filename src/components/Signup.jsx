@@ -13,8 +13,9 @@ function Signup() {
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const Signup = async (data) => {
+    setLoading(true);
     setError("");
     try {
       const userdata = await authservice.createAccount(data);
@@ -28,13 +29,22 @@ function Signup() {
       }
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 md:p-10">
-        
+        {loading && (
+          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+              <span className="text-indigo-700 font-medium">Creating Account</span>
+            </div>
+          </div>
+        )}
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <span className="w-20">

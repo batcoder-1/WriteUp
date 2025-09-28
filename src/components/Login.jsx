@@ -14,9 +14,10 @@ function Login() {
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const handleLogin = async (data) => {
     setError("");
+    setLoading(true);
     try {
       const response = await authservice.Login(data);
       if (response) {
@@ -30,12 +31,21 @@ function Login() {
     } catch (err) {
       console.error("Login failed:", err);
       setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <div className="flex items-center justify-center w-full">
       <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10">
+        {loading && (
+          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+              <span className="text-indigo-700 font-medium">Signing you in...</span>
+            </div>
+          </div>
+        )}
         <div className="mb-2 flex justify-center">
           <span className="inline-block w-full max-w-[100px]">
             <Logo width="100%" />

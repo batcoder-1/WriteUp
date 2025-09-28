@@ -23,7 +23,6 @@ export default function Post() {
     if (slug) {
       appwriteServices.getPost(slug).then(async (post) => {
         if (post){ setPost(post);
-          console.log(post);
           const user=await appwriteServices.getUser(post.User_ID);
          setBlogs(user.Blogs);
          setEmail(user.email);

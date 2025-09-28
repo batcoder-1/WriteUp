@@ -5,13 +5,22 @@ import appwriteServices from "../src/appwrite/configure"
 
 function Allpost(){
     const [posts,setPosts]=useState([]);
+    const [loading,setLoading]=useState(true);
     useEffect(()=>{
         appwriteServices.getPosts().then((posts)=>{
             if(posts){
                 setPosts(posts.documents);
             }
         })
+        setLoading(false);
     },[]);
+    if(loading){
+        return(
+            <>
+            <div>Loading...</div>
+            </>
+        )
+    }
 return(
     <>
      <div className='w-full py-8'>

@@ -4,6 +4,7 @@ import LogoutButton from "../src/components/Logoutbtn";
 import { useSelector, useDispatch } from "react-redux";
 import { login } from "../src/store/AuthSlice";
 import appwriteServices from "../src/appwrite/configure";
+import { set } from "react-hook-form";
 
 function Account() {
   const status = useSelector((state) => state.Auth.status);
@@ -12,6 +13,7 @@ function Account() {
   const [user, setUser] = useState(userdata || {});
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [saving, setSaving] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,19 +44,34 @@ function Account() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({ ...formData, image: URL.createObjectURL(file) });
+      setFormData({
+        ...formData,
+        Image: {
+          file, 
+          preview: URL.createObjectURL(file), 
+        },
+      });
     }
   };
 
   const handleSave = async () => {
+    setSaving(true);
     try {
+      let fileId = user.Image;
+      if (formData.Image?.file) {
+        const uploadedFile = await appwriteServices.uploadFile(formData.Image.file);
+        await appwriteServices.deletefile(fileId); // delete old file
+        fileId = uploadedFile.$id;
+      }
+
       const updatedUser = await appwriteServices.updateUser(
         user.$id,
         formData.Username,
-        formData.image,
+        fileId,
         user.Blogs,
-        user.email // keep email unchanged
+        user.email
       );
+
       await authservice.updateName(formData.Username);
       setUser(updatedUser);
       dispatch(login(updatedUser));
@@ -62,6 +79,7 @@ function Account() {
     } catch (err) {
       console.error("Error updating user:", err);
     }
+    setSaving(false);
   };
 
   if (!authStatus) {
@@ -73,7 +91,35 @@ function Account() {
       </div>
     );
   }
-
+if(saving){
+ return (
+  <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="bg-white px-6 py-4 rounded-lg shadow-md flex items-center space-x-3">
+      <svg
+        className="w-6 h-6 text-indigo-600 animate-spin"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        ></path>
+      </svg>
+      <span className="text-gray-700 font-medium">Saving Changes...</span>
+    </div>
+  </div>
+);
+}
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 flex flex-col">
       {/* Header */}
@@ -98,9 +144,15 @@ function Account() {
         <section className="bg-white rounded-2xl shadow-md p-6 flex flex-col sm:flex-row items-center gap-6 hover:shadow-lg transition">
           {/* Profile Image */}
           <div className="relative">
-            {formData.Image ? (
+            {formData.Image?.preview ? (
               <img
-                src={formData.Image}
+                src={formData.Image.preview}
+                alt="profile"
+                className="w-28 h-28 rounded-full object-cover border-4 border-indigo-200"
+              />
+            ) : user.Image ? (
+              <img
+                src={appwriteServices.getfileUrl(user.Image)}
                 alt="profile"
                 className="w-28 h-28 rounded-full object-cover border-4 border-indigo-200"
               />
